@@ -1,14 +1,19 @@
-from .database import db
+from datetime import datetime
+
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column
+
+from .database import Model
 
 
-class Client(db.Model):
+class Client(Model):
     __tablename__ = "client"
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    surname = db.Column(db.String(50), nullable=False)
-    credit_card = db.Column(db.String(50), nullable=True)
-    car_number = db.Column(db.String(10), nullable=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(50), nullable=False)
+    surname: Mapped[str] = mapped_column(String(50), nullable=False)
+    credit_card: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    car_number: Mapped[str | None] = mapped_column(String(10), nullable=True)
 
     def __repr__(self) -> str:
         return f"Клиент {self.name} {self.surname}"
@@ -17,14 +22,14 @@ class Client(db.Model):
         return {col.name: getattr(self, col.name) for col in self.__table__.columns}
 
 
-class Parking(db.Model):
+class Parking(Model):
     __tablename__ = "parking"
 
-    id = db.Column(db.Integer, primary_key=True)
-    address = db.Column(db.String(100), nullable=False)
-    opened = db.Column(db.Boolean, nullable=True)
-    count_places = db.Column(db.Integer, nullable=False)
-    count_available_places = db.Column(db.Integer, nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    address: Mapped[str] = mapped_column(String(100), nullable=False)
+    opened: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    count_places: Mapped[int] = mapped_column(Integer, nullable=False)
+    count_available_places: Mapped[int] = mapped_column(Integer, nullable=False)
 
     def __repr__(self) -> str:
         return f"Парковка {self.address}"
@@ -33,15 +38,15 @@ class Parking(db.Model):
         return {col.name: getattr(self, col.name) for col in self.__table__.columns}
 
 
-class ClientParking(db.Model):
+class ClientParking(Model):
     __tablename__ = "client_parking"
-    __table_args__ = (db.UniqueConstraint("client_id", "parking_id"),)
+    __table_args__ = (UniqueConstraint("client_id", "parking_id"),)
 
-    id = db.Column(db.Integer, primary_key=True)
-    client_id = db.Column(db.Integer, db.ForeignKey("client.id"), nullable=False)
-    parking_id = db.Column(db.Integer, db.ForeignKey("parking.id"), nullable=False)
-    time_in = db.Column(db.DateTime, nullable=True)
-    time_out = db.Column(db.DateTime, nullable=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    client_id: Mapped[int] = mapped_column(ForeignKey("client.id"), nullable=False)
+    parking_id: Mapped[int] = mapped_column(ForeignKey("parking.id"), nullable=False)
+    time_in: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    time_out: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     def __repr__(self) -> str:
         return f"Клиент {self.client_id} место {self.parking_id}"
