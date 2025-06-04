@@ -4,7 +4,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 toolbar = DebugToolbarExtension()
 
 
-def create_app():
+def create_app() -> Flask:  # Added return type annotation
     app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///prod.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False

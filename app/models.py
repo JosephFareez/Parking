@@ -2,23 +2,12 @@ from datetime import datetime
 from typing import Optional
 
 from sqlalchemy import ForeignKey, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column  # Fixed import
 
-from .database import db, int_pk, str10, str50, str100
+from .database import db, int_pk, str10, str100, str50  # Import Base
 
 
 class Client(db.Model):
-    """
-    Модель Client
-
-    Attributes:
-        id (int)
-        name (str)
-        surname (str)
-        credit_card (str)
-        car_number (str)
-    """
-
     __tablename__ = "client"
 
     id: Mapped[int_pk]
@@ -35,17 +24,6 @@ class Client(db.Model):
 
 
 class Parking(db.Model):
-    """
-    Модель Parking
-
-    Attributes:
-        id (int)
-        address (str)
-        opened (bool)
-        count_places (int)
-        count_available_places (str)
-    """
-
     __tablename__ = "parking"
 
     id: Mapped[int_pk]
@@ -62,17 +40,6 @@ class Parking(db.Model):
 
 
 class ClientParking(db.Model):
-    """
-    Модель ClientParking
-
-    Attributes:
-        id (int)
-        client_id (int)
-        parking_id (int)
-        time_in (datetime)
-        time_out (datetime)
-    """
-
     __tablename__ = "client_parking"
     __table_args__ = (UniqueConstraint("client_id", "parking_id"),)
 

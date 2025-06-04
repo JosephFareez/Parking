@@ -2,7 +2,7 @@ import datetime
 from typing import Tuple
 
 from flask import Blueprint, Response, jsonify, request
-from sqlalchemy import select
+from sqlalchemy import and_, select
 
 from .database import db
 from .models import Client, ClientParking, Parking
@@ -95,8 +95,10 @@ def leaving_parking_lot() -> Tuple[str, int]:
 
         client_parking = db.session.scalar(
             select(ClientParking).where(
-                ClientParking.client_id == request_data["client_id"],
-                ClientParking.parking_id == request_data["parking_id"],
+                and_(  # Combined conditions with and_()
+                    ClientParking.client_id == request_data["client_id"],
+                    ClientParking.parking_id == request_data["parking_id"],
+                )
             )
         )
 
