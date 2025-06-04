@@ -1,28 +1,14 @@
-from sqlalchemy import (
-    Boolean,
-    Column,
-    DateTime,
-    ForeignKey,
-    Integer,
-    String,
-    UniqueConstraint,
-)
-from sqlalchemy.orm import declarative_base
-
 from .database import db
 
-# Create declarative base class that works with mypy
-Base = declarative_base(cls=db.Model)
 
-
-class Client(Base):
+class Client(db.Model):
     __tablename__ = "client"
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String(50), nullable=False)
-    surname = Column(String(50), nullable=False)
-    credit_card = Column(String(50), nullable=True)
-    car_number = Column(String(10), nullable=True)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    surname = db.Column(db.String(50), nullable=False)
+    credit_card = db.Column(db.String(50), nullable=True)
+    car_number = db.Column(db.String(10), nullable=True)
 
     def __repr__(self) -> str:
         return f"Клиент {self.name} {self.surname}"
@@ -31,14 +17,14 @@ class Client(Base):
         return {col.name: getattr(self, col.name) for col in self.__table__.columns}
 
 
-class Parking(Base):
+class Parking(db.Model):
     __tablename__ = "parking"
 
-    id = Column(Integer, primary_key=True)
-    address = Column(String(100), nullable=False)
-    opened = Column(Boolean, nullable=True)
-    count_places = Column(Integer, nullable=False)
-    count_available_places = Column(Integer, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    address = db.Column(db.String(100), nullable=False)
+    opened = db.Column(db.Boolean, nullable=True)
+    count_places = db.Column(db.Integer, nullable=False)
+    count_available_places = db.Column(db.Integer, nullable=False)
 
     def __repr__(self) -> str:
         return f"Парковка {self.address}"
@@ -47,15 +33,15 @@ class Parking(Base):
         return {col.name: getattr(self, col.name) for col in self.__table__.columns}
 
 
-class ClientParking(Base):
+class ClientParking(db.Model):
     __tablename__ = "client_parking"
-    __table_args__ = (UniqueConstraint("client_id", "parking_id"),)
+    __table_args__ = (db.UniqueConstraint("client_id", "parking_id"),)
 
-    id = Column(Integer, primary_key=True)
-    client_id = Column(Integer, ForeignKey("client.id"), nullable=False)
-    parking_id = Column(Integer, ForeignKey("parking.id"), nullable=False)
-    time_in = Column(DateTime, nullable=True)
-    time_out = Column(DateTime, nullable=True)
+    id = db.Column(db.Integer, primary_key=True)
+    client_id = db.Column(db.Integer, db.ForeignKey("client.id"), nullable=False)
+    parking_id = db.Column(db.Integer, db.ForeignKey("parking.id"), nullable=False)
+    time_in = db.Column(db.DateTime, nullable=True)
+    time_out = db.Column(db.DateTime, nullable=True)
 
     def __repr__(self) -> str:
         return f"Клиент {self.client_id} место {self.parking_id}"
