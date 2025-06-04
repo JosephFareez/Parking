@@ -1,0 +1,43 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install flake8 isort black mypy pytest
+
+      - name: Run linters
+        run: |
+          # Format code first
+          black app/ tests/
+          isort app/ tests/
+          
+          # Run linters
+          flake8 app/ tests/
+          mypy --explicit-package-bases app/ tests/
+          MYPYPATH=.:parking mypy --explicit-package-bases app/ tests/
+
+      - name: Run tests
+        run: |
+          cd parking
+          pytest tests/ --cov=app
