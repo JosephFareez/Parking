@@ -73,7 +73,6 @@ def check_in_parking() -> Tuple[str, int]:
 
         db.session.add(new_client_parking)
         parking.count_available_places -= 1
-
         db.session.commit()
 
         return "", 201
@@ -95,7 +94,7 @@ def leaving_parking_lot() -> Tuple[str, int]:
 
         client_parking = db.session.scalar(
             select(ClientParking).where(
-                and_(  # Combined conditions with and_()
+                and_(
                     ClientParking.client_id == request_data["client_id"],
                     ClientParking.parking_id == request_data["parking_id"],
                 )
@@ -105,10 +104,8 @@ def leaving_parking_lot() -> Tuple[str, int]:
         if client_parking:
             client_parking.time_out = datetime.datetime.now()
             parking.count_available_places += 1
-
-        db.session.commit()
+            db.session.commit()
 
         return "", 200
-
     else:
         return "Credit card is not linked.", 403

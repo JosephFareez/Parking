@@ -1,20 +1,14 @@
-from datetime import datetime
-from typing import Optional
-
-from sqlalchemy import ForeignKey, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column  # Fixed import
-
-from .database import db, int_pk, str10, str100, str50  # Import Base
+from .database import db
 
 
 class Client(db.Model):
     __tablename__ = "client"
 
-    id: Mapped[int_pk]
-    name: Mapped[str50]
-    surname: Mapped[str50]
-    credit_card: Mapped[Optional[str50]] = mapped_column(nullable=True)
-    car_number: Mapped[Optional[str10]] = mapped_column(nullable=True)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    surname = db.Column(db.String(50), nullable=False)
+    credit_card = db.Column(db.String(50), nullable=True)
+    car_number = db.Column(db.String(10), nullable=True)
 
     def __repr__(self) -> str:
         return f"Клиент {self.name} {self.surname}"
@@ -26,11 +20,11 @@ class Client(db.Model):
 class Parking(db.Model):
     __tablename__ = "parking"
 
-    id: Mapped[int_pk]
-    address: Mapped[str100]
-    opened: Mapped[Optional[bool]] = mapped_column(nullable=True)
-    count_places: Mapped[int]
-    count_available_places: Mapped[int]
+    id = db.Column(db.Integer, primary_key=True)
+    address = db.Column(db.String(100), nullable=False)
+    opened = db.Column(db.Boolean, nullable=True)
+    count_places = db.Column(db.Integer, nullable=False)
+    count_available_places = db.Column(db.Integer, nullable=False)
 
     def __repr__(self) -> str:
         return f"Парковка {self.address}"
@@ -41,13 +35,13 @@ class Parking(db.Model):
 
 class ClientParking(db.Model):
     __tablename__ = "client_parking"
-    __table_args__ = (UniqueConstraint("client_id", "parking_id"),)
+    __table_args__ = (db.UniqueConstraint("client_id", "parking_id"),)
 
-    id: Mapped[int_pk]
-    client_id: Mapped[int] = mapped_column(ForeignKey("client.id"))
-    parking_id: Mapped[int] = mapped_column(ForeignKey("parking.id"))
-    time_in: Mapped[Optional[datetime]] = mapped_column(nullable=True)
-    time_out: Mapped[Optional[datetime]] = mapped_column(nullable=True)
+    id = db.Column(db.Integer, primary_key=True)
+    client_id = db.Column(db.Integer, db.ForeignKey("client.id"), nullable=False)
+    parking_id = db.Column(db.Integer, db.ForeignKey("parking.id"), nullable=False)
+    time_in = db.Column(db.DateTime, nullable=True)
+    time_out = db.Column(db.DateTime, nullable=True)
 
     def __repr__(self) -> str:
         return f"Клиент {self.client_id} место {self.parking_id}"
