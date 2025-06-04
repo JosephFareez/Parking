@@ -7,11 +7,15 @@ from sqlalchemy import (
     String,
     UniqueConstraint,
 )
+from sqlalchemy.orm import declarative_base
 
 from .database import db
 
+# Create declarative base class that works with mypy
+Base = declarative_base(cls=db.Model)
 
-class Client(db.Model):
+
+class Client(Base):
     __tablename__ = "client"
 
     id = Column(Integer, primary_key=True)
@@ -27,7 +31,7 @@ class Client(db.Model):
         return {col.name: getattr(self, col.name) for col in self.__table__.columns}
 
 
-class Parking(db.Model):
+class Parking(Base):
     __tablename__ = "parking"
 
     id = Column(Integer, primary_key=True)
@@ -43,7 +47,7 @@ class Parking(db.Model):
         return {col.name: getattr(self, col.name) for col in self.__table__.columns}
 
 
-class ClientParking(db.Model):
+class ClientParking(Base):
     __tablename__ = "client_parking"
     __table_args__ = (UniqueConstraint("client_id", "parking_id"),)
 
