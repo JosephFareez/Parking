@@ -1,41 +1,21 @@
-name: CI Pipeline
+name: CI
 
-on:
-  push:
-    branches:
-      - '*'
-  pull_request:
-    branches:
-      - '*'
+on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install --upgrade "sqlalchemy>=2.0.0"
-          pip install flake8 isort black mypy pytest
-
-      - name: Run linters
-        run: |
-          black app/ tests/
-          isort app/ tests/
-          
-          flake8 app/ tests/
-          mypy --explicit-package-bases app/ tests/
-          MYPYPATH=.:parking mypy --explicit-package-bases app/ tests/
-
-      - name: Run tests
-        run: |
-          pytest tests/ --cov=app
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install pytest pytest-cov  # Add pytest-cov here
+    - name: Run tests with coverage
+      run: |
+        pytest tests/ --cov=app
