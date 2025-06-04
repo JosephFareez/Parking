@@ -40,7 +40,6 @@ pytest==8.2.2
 python-dateutil==2.9.0.post0
 six==1.16.0
 SQLAlchemy==2.0.41
-sqlalchemy-stubs==0.4
 tomli==2.2.1
 tomlkit==0.13.2
 types-click==7.1.8
